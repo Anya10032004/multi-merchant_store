@@ -1,3 +1,4 @@
+from  import mapped_collection
 from flask import Flask, jsonify, request
 import json
 from datetime import datetime
@@ -193,7 +194,11 @@ def merchants():
         session.commit()
         return jsonify({"message": "Merchants added successfully", "status": 201, "data": new_merchants.info_merchants()}), 201
 
-
+@app_toko.route("/api/merchant/me", methods=["GET"])
+def get_my_merchant():
+    data = request.get_json()
+    id_user = data.get("id_user")
+    
     
 if __name__ == "__main__":
     app_toko.run(debug=True)
