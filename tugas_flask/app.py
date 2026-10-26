@@ -119,41 +119,79 @@ def main():
 # ----------------------------------------------------------------- #
 # Merchant
 
-@app_toko.route("/api/users", methods=["POST"])
-def add_users():
+@app_toko.route("/api/register", methods=["POST"])
+def register():
     data = request.get_json()
     namee = data.get("name")
     emaill = data.get("email")
     passwordd = data.get("password")
+    rolee = data.get("role")
 
-    if not namee or not emaill or not passwordd:
-        return jsonify({"message": "Missing required fields", "status": 400}), 400
+    if not namee or not emaill or not passwordd or not rolee:
+        return jsonify(
+            {
+                "message": "Missing required fields", 
+                "status": 400
+            }
+        ), 400
+    
+    if rolee.lower() != "user" or rolee.lower() != "merchant":
+        return jsonify(
+            {
+                "message": "Invalid role", 
+                "status": 401
+            }
+        ), 401
+
     
     # Acess the database
     with Session(bind=db.engine) as session:
-        new_users = Users(name=namee, email=emaill, password=passwordd)
+        new_users = Users(name=namee, email=emaill, password=passwordd, role=rolee)
         session.add(new_users)
         session.commit()
         return jsonify({"message": "User added successfully", "status": 201, "data": new_users.info_users()}), 201
     
 
-@app_toko.route("/api/users", methods=["GET"])
-def get_all_users():
+@app_toko.route("/api/login", methods=["POST"])
+def login():
+    data = request.get_json()
+    emaill = data.get("email")
+    passwordd = data.get("password")
+
+    if not emaill or not passwordd:
+        return jsonify({"message": "Missing required fields", "status": 400}), 400
+    
+    # Acess the database
     with Session(bind=db.engine) as session:
-        all_users = session.scalars(select(Users).order_by(Users.id.asc())).all()
-        list_users = [users.info_users() for users in all_users]
-        if list_users:
-            return jsonify(
-                {
-                    "message": "Users retrieved successfully", 
-                    "status": 200, 
-                    "data": list_users
-                }
-            ), 200
-        return jsonify({"message": "No users found", "status": 200, "data": None}), 200
+        users = session.scalars(select(Users).where(Users.email == emaill).where(Users.password == passwordd)).first()
+        if users:
+            return jsonify({"message": "Login successful", "status": 200, "data": users.info_users()}), 200
+        return jsonify({"message": "Invalid email or password", "status": 401}), 401
 
 
+@app_toko.route("api/merchants", methods=["POST"])
+def merchants():
+    data = request.get_json()
+    store_name = data.get("store_name")
+    description = data.get("description")
+    id_user = data.get("id_user")
+    adress = data.get("adress")
+    phone = data.get("phone")
 
+    if not store_name or not description or not id_user or not adress or not phone:
+        return jsonify(
+            {
+                "message": "Missing required fields", 
+                "status": 400
+            }
+        ), 400
+    
+    # Acess the database
+    with Session(bind=db.engine) as session:
+        new_merchants = Merchants(store_name=store_name, description=description, id_user=id_user, adress=adress, phone=phone)
+        session.add(new_merchants)
+        session.commit()
+        return jsonify({"message": "Merchants added successfully", "status": 201, "data": new_merchants.info_merchants()}), 201
 
 
     
