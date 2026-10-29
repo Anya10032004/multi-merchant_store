@@ -9,7 +9,7 @@ from sqlalchemy import create_engine, String, DateTime, select, text, Integer, F
 from sqlalchemy.orm import DeclarativeBase, mapped_column, Session, Mapped
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
-
+from flask_jwt_extended import JWTManager, get_jwt, jwt_required, get_jwt_identity, create_access_token
 # Tabble --> users(register dan login), merchants, products. claims
 
 # Connect The database
@@ -23,11 +23,17 @@ from werkzeug.security import generate_password_hash, check_password_hash
 app_toko = Flask(__name__)
 
 # Connecting The Database
-app_toko.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:@localhost:3306/store_db"
+app_toko.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:@localhost:3306/db_store"
 
 # Connect the app with the Flask-SQLAlchemy  by initialising the db object from the class SQLAlchemy
 # This will be used for CRUD operation in the future and create tables in the database
 db = SQLAlchemy(app_toko)
+jwt = JWTManager(app_toko) # This is for generating JWT Token
+
+app_toko.config["JWT_SECRET_KEY"] = "KunciRahasiaKitaBisaSajaGanti" # this is to set the secret key for the JWT token, 
+                                                                      # it is a string that will be used to sign the JWT token
+                                                                      # it is a random string, not a password, it is used to verify the token
+                                                                      # this will expire in 24 hours, change as you wish
 
 # Model for Users Table
 # The model below is used to represent the users table in the database. 
@@ -47,6 +53,7 @@ class Users(db.Model):
             "name" : self.name,
             "password" : self.password,
             "email" : self.email,
+            "role" : self.role
         }
 
 class Merchants(db.Model):
@@ -128,9 +135,9 @@ def register():
     namee = data.get("name")
     emaill = data.get("email")
     passwordd = data.get("password")
-    rolee = data.get("role")
+    rolee = data.get("role").lower()
     hash_password = generate_password_hash(passwordd)
-
+    role_list = ["user", "merchant"]
     if not namee or not emaill or not passwordd or not rolee:
         return jsonify(
             {
@@ -139,13 +146,14 @@ def register():
             }
         ), 400
     
-    if rolee.lower() != "user" or rolee.lower() != "merchant":
+    if rolee not in role_list:
         return jsonify(
             {
                 "message": "Invalid role", 
                 "status": 401
             }
         ), 401
+    print(hash_password)
 
     
     # Acess the database
@@ -178,24 +186,35 @@ def login():
             token = create_access_token(
                 identity = str(users.id),
                 additional_claims={
-                    "id": str(users.id),
+                    "id": users.id,
+                    "name": users.name,
+                    "email": users.email,
+                    "password": users.password,
                     "role": users.role
                 }
             )
 
-            return jsonify({"message": "Login successful", "status": 200, "data": users.info_users()}), 200
+            return jsonify(
+                {"message": "Login successful", 
+                "status": 200, 
+                "data": users.info_users(),
+                "Acess Token": token}
+                ), 200
 
 
         return jsonify({"message": "Invalid email or password", "status": 401}), 401
 
-# id : Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-#     name : Mapped[str] = mapped_column(String(255), unique=True)
-#     email : Mapped[str] = mapped_column(String(255))
-#     password : Mapped[str] = mapped_column(String(255))
-# MERCHANT
 @app_toko.route("/api/merchants", methods=["POST"])
+@jwt_required() # This is means that to  acess this endpoint you need to login first (we need to bring the token when accessing this endpoint)
 def merchants():
-    # AUTENTIKASI(UDAH LOGIN GAKK, dan pastikan saat login dengan akun tersebut memiliki role MERCHANT)
+    # Auntetication
+    token_acess = get_jwt() # After we use jwt_required() to check if we have login, we 
+                            # will use get_jwt() to get the token that has already checked
+    rolee = token_acess.get("role")
+    if rolee.lower() != "merchant":
+        return jsonify({
+            "error": "You have no access because you are not a Merchant"
+        })
     data = request.get_json()
     store_namee = data.get("store_name")
     description = data.get("description")
@@ -223,8 +242,6 @@ def merchants():
 
 @app_toko.route("/api/merchant/me", methods=["GET"])
 def get_my_merchant():
-    # Authentication(UDAH LOGIN GAKK, dan pastikan saat login dengan akun tersebut memiliki role MERCHANT)
-
     # Acess the database
     with Session(bind=db.engine) as session:
         merchant = session.scalars(select(Merchants).where(Merchants.id_user == session["id"])).first()
@@ -233,8 +250,16 @@ def get_my_merchant():
         return jsonify({"message": "Merchant not found", "status": 404}), 404
     
 @app_toko.route("/api/merchant/me", methods  = ["PUT"])
+@jwt_required() # This is means that to  acess this endpoint you need to login first (we need to bring the token when accessing this endpoint)
 def update_my_merchant():
-    # Authentication(UDAH LOGIN GAKK, dan pastikan saat login dengan akun tersebut memiliki role MERCHANT)
+    # Auntetication
+    token_acess = get_jwt() # After we use jwt_required() to check if we have login, we 
+                            # will use get_jwt() to get the token that has already checked
+    rolee = token_acess.get("role")
+    if rolee.lower() != "merchant":
+        return jsonify({
+            "error": "You have no access because you are not a Merchant"
+        })
     data = request.get_json()
     store_name = data.get("store_name")
     description = data.get("description")
@@ -277,13 +302,16 @@ def get_merchants_id(id):
 
 # PRODUCT
 @app_toko.route("/api/products", methods = ["POST"])
+@ jwt_required() # This is means that to  acess this endpoint you need to login first (we need to bring the token when accessing this endpoint)
 def product():
-
-    # AUTENTIKASI(UDAH LOGIN GAK, pastikan sebagai MERCHANT)
-    if "id" not in session:
-        return jsonify({"message": "You are not logged in", "status": 401}), 401
-    if session["role"] != "MERCHANT":
-        return jsonify({"message": "You are not a merchant", "status": 403}), 403
+    # Auntetication
+    token_acess = get_jwt() # After we use jwt_required() to check if we have login, we 
+                            # will use get_jwt() to get the token that has already checked
+    rolee = token_acess.get("role")
+    if rolee.lower() != "merchant":
+        return jsonify({
+            "error": "You have no access because you are not a Merchant"
+        })
 
     data = request.get_json()
     name = data.get("name")
@@ -309,26 +337,33 @@ def product():
         return jsonify({"message": "Product added successfully", "status": 201, "data": new_product.info_product()}), 201
 
 @app_toko.route("/api/products/mine", methods = ["GET"])
+@jwt_required() # This is means that to  acess this endpoint you need to login first (we need to bring the token when accessing this endpoint)
 def get_products():
-     # AUTENTIKASI(UDAH LOGIN GAK)
-     if "id" not in session:
-        return jsonify({"message": "You are not logged in", "status": 401}), 401
-     if session["role"] != "MERCHANT":
-        return jsonify({"message": "You are not a merchant", "status": 403}), 403
-     
-     with Session(bind=db.engine) as session:
+     # Auntetication
+    token_acess = get_jwt() # After we use jwt_required() to check if we have login, we 
+                            # will use get_jwt() to get the token that has already checked
+    rolee = token_acess.get("role")
+    if rolee.lower() != "merchant":
+        return jsonify({
+            "error": "You have no access because you are not a Merchant"
+        })
+    with Session(bind=db.engine) as session:
         new_product = session.scalars(select(Products).where(Products.id == session["id"])).first()
         if new_product:
             return jsonify({"message": "List of yoru products", "status": 200, "data": [p.info_product() for p in new_product]}), 200
         return jsonify({"message": "You don't have any products", "status": 404}), 404
 
 @app_toko.route("/api/products/<int:product_id>", methods = ["PUT"])
+@jwt_required() # This is means that to  acess this endpoint you need to login first (we need to bring the token when accessing this endpoint)
 def update_products(product_id):
-    # AUTENTIKASI(UDAH LOGIN GAKK)
-    if "id" not in session:
-        return jsonify({"message": "You are not logged in", "status": 401}), 401
-    if session["role"] != "MERCHANT":
-        return jsonify({"message": "You are not a merchant", "status": 403}), 403
+    # Auntetication
+    token_acess = get_jwt() # After we use jwt_required() to check if we have login, we 
+                            # will use get_jwt() to get the token that has already checked
+    rolee = token_acess.get("role")
+    if rolee.lower() != "merchant":
+        return jsonify({
+            "error": "You have no access because you are not a Merchant"
+        })
     data = request.get_json()
     name = data.get("name")
     Merchant_id = data.get("merchant_id")
@@ -358,12 +393,16 @@ def update_products(product_id):
         return jsonify({"message": "Product not found", "status": 404}), 404
 
 @app_toko.route("/api/products/<int:product_id>", methods = ["DELETE"])
+@jwt_required() # This is means that to  acess this endpoint you need to login first (we need to bring the token when accessing this endpoint)
 def delete_products(product_id):
-    # AUTENTIKASI(UDAH LOGIN GAKK)
-    if "id" not in session:
-        return jsonify({"message": "You are not logged in", "status": 401}), 401
-    if session["role"] != "MERCHANT":
-        return jsonify({"message": "You are not a merchant", "status": 403}), 403
+    # Auntetication
+    token_acess = get_jwt() # After we use jwt_required() to check if we have login, we 
+                            # will use get_jwt() to get the token that has already checked
+    rolee = token_acess.get("role")
+    if rolee.lower() != "merchant":
+        return jsonify({
+            "error": "You have no access because you are not a Merchant"
+        })
 
     with Session(bind=db.engine) as session:
         product = session.scalars(select(Products).where(Products.id == product_id and Products.id_merchant == session["merchant_id"])).first()
@@ -376,12 +415,6 @@ def delete_products(product_id):
 # CATALOG
 @app_toko.route("/api/catalog", methods = ["GET"])    
 def catalog():
-    # AUTENTIKASI(UDAH LOGIN GAKK SEBAGAI USER)
-    if "id" not in session:
-        return jsonify({"message": "You are not logged in", "status": 401}), 401
-    if session["role"] != "USER":
-        return jsonify({"message": "You are not a user", "status": 403}), 403
-
     with Session(bind=db.engine) as session:
         products = session.scalars(select(Products).order_by(Products.id.desc())).all()
         if products:
@@ -390,7 +423,6 @@ def catalog():
 
 @app_toko.route("/api/catalog/<int:product_id>", methods = ["GET"])
 def get_catalog(product_id):
-    # AUTENTIKASI(UDAH LOGIN GAKK SEBAGAI USER)
     with Session(bind=db.engine) as session:
         product = session.scalars(select(Products).where(Products.id == id)).first()
         if product:
@@ -398,8 +430,16 @@ def get_catalog(product_id):
         return jsonify({"message": "Product not found", "status": 404}), 404
 
 @app_toko.route("/api/claims", methods = ["POST"])
+@jwt_required() # This is means that to  acess this endpoint you need to login first (we need to bring the token when accessing this endpoint)
 def claim_product():
-    # AUTENTIKASI(UDAH LOGIN GAKK SEBAGAI USER)
+    token_acess = get_jwt() # After we use jwt_required() to check if we have login, we 
+                            # will use get_jwt() to get the token that has already checked
+    rolee = token_acess.get("role")
+    if rolee.lower() != "user":
+        return jsonify({
+            "error": "You have no access because you are not a User"
+        })
+
     data = request.get_json()
     product_id = data.get("product_id")
     amount = data.get("amount")
@@ -413,22 +453,26 @@ def claim_product():
         return jsonify({"message": "Claim added successfully", "status": 201, "data": new_claim.info_claim()}), 201
 
 @app_toko.route("/api/claims", methods = ["GET"])
+@jwt_required() # This is means that to  acess this endpoint you need to login first (we need to bring the token when accessing this endpoint)
 def get_claims():
-    # AUTENTIKASI(UDAH LOGIN GAKK SEBAGAI USER)
+    token_acess = get_jwt() # After we use jwt_required() to check if we have login, we 
+                            # will use get_jwt() to get the token that has already checked
+    rolee = token_acess.get("role")
+    if rolee.lower() != "user":
+        return jsonify({
+            "error": "You have no access because you are not a User"
+        })
+    if "id" not in session:
+        return jsonify({"message": "You are not logged in", "status": 401}), 401
+    if session["role"] != "USER":
+        return jsonify({"message": "You are not a user", "status": 403}), 403
     with Session(bind=db.engine) as session:
         claims = session.scalars(select(Claims).order_by(Claims.id.desc())).all()
         if claims:
             return jsonify({"message": "List of claims", "status": 200, "data": [c.info_claim() for c in claims]}), 200
         return jsonify({"message": "No claims found", "status": 404}), 404
 
-@app_toko.route("/api/claims/<int:claim_id>", methods = ["GET"])
-def get_claim(claim_id):
-    # AUTENTIKASI(UDAH LOGIN GAKK SEBAGAI USER)
-    with Session(bind=db.engine) as session:
-        claim = session.scalars(select(Claims).where(Claims.id == claim_id)).first()
-        if claim:
-            return jsonify({"message": "Claim found", "status": 200, "data": claim.info_claim()}), 200
-        return jsonify({"message": "Claim not found", "status": 404}), 404
+
 
     
 if __name__ == "__main__":
