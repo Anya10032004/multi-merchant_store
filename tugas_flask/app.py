@@ -1,4 +1,4 @@
-from  import mapped_collection
+# mapped_collection
 from flask import Flask, jsonify, request
 import json
 from datetime import datetime
@@ -8,6 +8,7 @@ import os
 from sqlalchemy import create_engine, String, DateTime, select, text, Integer, ForeignKey
 from sqlalchemy.orm import DeclarativeBase, mapped_column, Session, Mapped
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
 
 # Tabble --> users(register dan login), merchants, products. claims
 
@@ -38,6 +39,7 @@ class Users(db.Model):
     name : Mapped[str] = mapped_column(String(255), unique=True)
     email : Mapped[str] = mapped_column(String(255))
     password : Mapped[str] = mapped_column(String(255))
+    role : Mapped[str] = mapped_column(String(225))
 
     def info_users(self):
         return {
@@ -127,6 +129,7 @@ def register():
     emaill = data.get("email")
     passwordd = data.get("password")
     rolee = data.get("role")
+    hash_password = generate_password_hash(passwordd)
 
     if not namee or not emaill or not passwordd or not rolee:
         return jsonify(
@@ -147,7 +150,7 @@ def register():
     
     # Acess the database
     with Session(bind=db.engine) as session:
-        new_users = Users(name=namee, email=emaill, password=passwordd, role=rolee)
+        new_users = Users(name=namee, email=emaill, password=hash_password, role=rolee)
         session.add(new_users)
         session.commit()
         return jsonify({"message": "User added successfully", "status": 201, "data": new_users.info_users()}), 201
@@ -162,19 +165,35 @@ def login():
     if not emaill or not passwordd:
         return jsonify({"message": "Missing required fields", "status": 400}), 400
     
+    
     # Acess the database
     with Session(bind=db.engine) as session: # this code is to acesss session, session is for interacting with the database, 
                                              # it will create a temporary session to interact with the database and close it after the interaction
-        users = session.scalars(select(Users).where(Users.email == emaill).where(Users.password == passwordd)).first() # this code is to select a user from the database based on the email 
+        users = session.scalars(select(Users).where(Users.email == emaill)).first() # this code is to select a user from the database based on the email 
                                                                                                                        # and password provided, 
                                                                                                                        # where() is to filter the data, and 
                                                                                                                        # .first() is to get the first result
-        if users:
+        if users and check_password_hash(users.password, passwordd):
+            # Login sicessfuly, we will make the token
+            token = create_access_token(
+                identity = str(users.id),
+                additional_claims={
+                    "id": str(users.id),
+                    "role": users.role
+                }
+            )
+
             return jsonify({"message": "Login successful", "status": 200, "data": users.info_users()}), 200
+
+
         return jsonify({"message": "Invalid email or password", "status": 401}), 401
 
+# id : Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+#     name : Mapped[str] = mapped_column(String(255), unique=True)
+#     email : Mapped[str] = mapped_column(String(255))
+#     password : Mapped[str] = mapped_column(String(255))
 # MERCHANT
-@app_toko.route("api/merchants", methods=["POST"])
+@app_toko.route("/api/merchants", methods=["POST"])
 def merchants():
     # AUTENTIKASI(UDAH LOGIN GAKK, dan pastikan saat login dengan akun tersebut memiliki role MERCHANT)
     data = request.get_json()
@@ -248,7 +267,7 @@ def get_merchants():
         return jsonify({"message": "Merchant not found", "status": 404}), 404
           
 @app_toko.route("/api/merchants/<int:id>", methods  = ["GET"])
-def get_merchants(id):
+def get_merchants_id(id):
     with Session(bind=db.engine) as session:
         merchant = session.scalars(select(Merchants.store_name, Products.name, Products.price, Products.stock).join(Products, Merchants.id == Products.merchant_id).filter(Merchants.id == id)).all()
         if merchant:
@@ -289,7 +308,7 @@ def product():
         session.commit()
         return jsonify({"message": "Product added successfully", "status": 201, "data": new_product.info_product()}), 201
 
-@app_toko.route("api/products/mine", methods = ["GET"])
+@app_toko.route("/api/products/mine", methods = ["GET"])
 def get_products():
      # AUTENTIKASI(UDAH LOGIN GAK)
      if "id" not in session:
@@ -303,7 +322,7 @@ def get_products():
             return jsonify({"message": "List of yoru products", "status": 200, "data": [p.info_product() for p in new_product]}), 200
         return jsonify({"message": "You don't have any products", "status": 404}), 404
 
-@app_toko.route("api/products/<int:product_id>", methods = ["PUT"])
+@app_toko.route("/api/products/<int:product_id>", methods = ["PUT"])
 def update_products(product_id):
     # AUTENTIKASI(UDAH LOGIN GAKK)
     if "id" not in session:
@@ -338,7 +357,7 @@ def update_products(product_id):
             return jsonify({"message": "Product updated successfully", "status": 200, "data": product.info_product()}), 200
         return jsonify({"message": "Product not found", "status": 404}), 404
 
-@app_toko.route("api/products/<int:product_id>", methods = ["DELETE"])
+@app_toko.route("/api/products/<int:product_id>", methods = ["DELETE"])
 def delete_products(product_id):
     # AUTENTIKASI(UDAH LOGIN GAKK)
     if "id" not in session:
@@ -355,7 +374,7 @@ def delete_products(product_id):
         return jsonify({"message": "Product deleted successfully", "status": 200}), 200
 
 # CATALOG
-@app_toko.route("api/catalog", methods = ["GET"])    
+@app_toko.route("/api/catalog", methods = ["GET"])    
 def catalog():
     # AUTENTIKASI(UDAH LOGIN GAKK SEBAGAI USER)
     if "id" not in session:
@@ -369,7 +388,7 @@ def catalog():
             return jsonify({"message": "List of products", "status": 200, "data": [p.info_product() for p in products]}), 200
         return jsonify({"message": "No products found", "status": 404}), 404
 
-@app_toko.route("api/catalog/<int:product_id>", methods = ["GET"])
+@app_toko.route("/api/catalog/<int:product_id>", methods = ["GET"])
 def get_catalog(product_id):
     # AUTENTIKASI(UDAH LOGIN GAKK SEBAGAI USER)
     with Session(bind=db.engine) as session:
@@ -378,7 +397,7 @@ def get_catalog(product_id):
             return jsonify({"message": "Product found", "status": 200, "data": product.info_product()}), 200
         return jsonify({"message": "Product not found", "status": 404}), 404
 
-@app_toko.route("api/claims", methods = ["POST"])
+@app_toko.route("/api/claims", methods = ["POST"])
 def claim_product():
     # AUTENTIKASI(UDAH LOGIN GAKK SEBAGAI USER)
     data = request.get_json()
@@ -393,7 +412,7 @@ def claim_product():
         session.commit()
         return jsonify({"message": "Claim added successfully", "status": 201, "data": new_claim.info_claim()}), 201
 
-@app_toko.route("api/claims", methods = ["GET"])
+@app_toko.route("/api/claims", methods = ["GET"])
 def get_claims():
     # AUTENTIKASI(UDAH LOGIN GAKK SEBAGAI USER)
     with Session(bind=db.engine) as session:
@@ -402,7 +421,7 @@ def get_claims():
             return jsonify({"message": "List of claims", "status": 200, "data": [c.info_claim() for c in claims]}), 200
         return jsonify({"message": "No claims found", "status": 404}), 404
 
-@app_toko.route("api/claims/<int:claim_id>", methods = ["GET"])
+@app_toko.route("/api/claims/<int:claim_id>", methods = ["GET"])
 def get_claim(claim_id):
     # AUTENTIKASI(UDAH LOGIN GAKK SEBAGAI USER)
     with Session(bind=db.engine) as session:
