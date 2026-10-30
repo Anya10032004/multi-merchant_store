@@ -222,10 +222,10 @@ def merchants():
     adress = data.get("adress")
     phone = data.get("phone")
 
-    if not store_namee or not description or not id_user or not adress or not phone:
+    if not store_namee:
         return jsonify(
             {
-                "message": "Missing required fields", 
+                "message": "Store name is required", 
                 "status": 400
             }
         ), 400
@@ -312,6 +312,11 @@ def product():
         return jsonify({
             "error": "You have no access because you are not a Merchant"
         })
+    
+    with Session(bind=db.engine) as session:
+        merchant_id = session.scalars(select(Merchants.id).where(Merchants.id_user == session["id"])).first()
+        if not merchant_id:
+            return jsonify({"message": "No profile for Merchant is found, please create one first", "status": 400}), 400
 
     data = request.get_json()
     name = data.get("name")
@@ -418,7 +423,7 @@ def catalog():
     with Session(bind=db.engine) as session:
         products = session.scalars(select(Products).order_by(Products.id.desc())).all()
         if products:
-            return jsonify({"message": "List of products", "status": 200, "data": [p.info_product() for p in products]}), 200
+            return jsonify({"message": "List of products", "status": 200, "data": [p.info_product() for p in products if p.stock > 0]}), 200
         return jsonify({"message": "No products found", "status": 404}), 404
 
 @app_toko.route("/api/catalog/<int:product_id>", methods = ["GET"])
@@ -447,7 +452,15 @@ def claim_product():
         return jsonify({"message": "Missing required fields", "status": 400}), 400
     
     with Session(bind=db.engine) as session:
-        new_claim = Claims(product_id=product_id, amount=amount)
+        prod = session.scalars(select(Products).where(Products.id == product_id)).first()
+        if not prod:
+            return jsonify({"message": "Product not found", "status": 404}), 404
+        if amount > prod.stock:
+            return jsonify({"message": f"Not enough stock, only {prod.stock} left", "status": 400}), 400
+        prod.stock -= amount
+        session.add(prod)
+        session.commit()
+        new_claim = Claims(id_product=product_id, amount=amount, id_user=token_acess.get("id"))
         session.add(new_claim)
         session.commit()
         return jsonify({"message": "Claim added successfully", "status": 201, "data": new_claim.info_claim()}), 201
