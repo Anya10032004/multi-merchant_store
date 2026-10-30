@@ -158,6 +158,10 @@ def register():
     
     # Acess the database
     with Session(bind=db.engine) as session:
+        # check if email already exists
+        user = session.scalars(select(Users).where(Users.email == emaill)).first()
+        if user:
+            return jsonify({"message": "Email already exists", "status": 400}), 400
         new_users = Users(name=namee, email=emaill, password=hash_password, role=rolee)
         session.add(new_users)
         session.commit()
@@ -490,3 +494,7 @@ def get_claims():
     
 if __name__ == "__main__":
     app_toko.run(debug=True)
+
+
+# To do list:
+# 1. menentukanbagaimana caranya supaya saat udah dpaat token sesudha login, waktu kita coba end point yang butuh token akan terhubung jika kita coba di postman
