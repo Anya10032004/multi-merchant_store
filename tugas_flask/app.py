@@ -83,6 +83,7 @@ class Products(db.Model):
     price : Mapped[int] = mapped_column(Integer)
     stock : Mapped[int] = mapped_column(Integer)
     id_merchant : Mapped[int] = mapped_column(ForeignKey("merchants.id"))
+    name : Mapped[int] = mapped_column(String(255))
 
     def info_products(self):
         return {
@@ -222,7 +223,7 @@ def merchants():
     data = request.get_json()
     store_namee = data.get("store_name")
     description = data.get("description")
-    id_user = data.get("id_user")
+    id_user = get_jwt_identity() # This for getting the ID from the token that already checked
     adress = data.get("adress")
     phone = data.get("phone")
 
@@ -237,18 +238,31 @@ def merchants():
     # Acess the database
     with Session(bind=db.engine) as session:
         checkk = session.scalars(select(Merchants).where(Merchants.store_name == store_namee)).all()
+        check2 = session.scalars(select(Merchants).where(Merchants.id_user == id_user)).first()
         if len(checkk) > 0:
             return jsonify({"message": "That store name is already taken", "status": 400}), 400
+        if check2:
+            return jsonify({"message": "You already have a store", "status": 400}), 400
         new_merchants = Merchants(store_name=store_namee, description=description, id_user=id_user, adress=adress, phone=phone)
         session.add(new_merchants)
         session.commit()
         return jsonify({"message": "Merchants added successfully", "status": 201, "data": new_merchants.info_merchants()}), 201
 
 @app_toko.route("/api/merchant/me", methods=["GET"])
+@jwt_required() # This is means that to  acess this endpoint you need to login first (we need to bring the token when accessing this endpoint)
 def get_my_merchant():
+    # Auntetication
+    token_acess = get_jwt() # After we use jwt_required() to check if we have login, we 
+                            # will use get_jwt() to get the token that has already checked
+    rolee = token_acess.get("role")
+    if rolee.lower() != "merchant":
+        return jsonify({
+            "error": "You have no access because you are not a Merchant"
+        })
     # Acess the database
     with Session(bind=db.engine) as session:
-        merchant = session.scalars(select(Merchants).where(Merchants.id_user == session["id"])).first()
+        id_user = get_jwt_identity() # This for getting the ID from the token that already checked
+        merchant = session.scalars(select(Merchants).where(Merchants.id_user == id_user)).first()
         if merchant:
             return jsonify({"message": "Merchant found", "status": 200, "data": merchant.info_merchants()}), 200
         return jsonify({"message": "Merchant not found", "status": 404}), 404
@@ -287,7 +301,16 @@ def update_my_merchant():
 
 
 @app_toko.route("/api/merchants", methods  = ["GET"])
+@jwt_required() # This is means that to  acess this endpoint you need to login first (we need to bring the token when accessing this endpoint)
 def get_merchants():
+    # Auntetication
+    token_acess = get_jwt() # After we use jwt_required() to check if we have login, we 
+                            # will use get_jwt() to get the token that has already checked
+    rolee = token_acess.get("role")
+    if rolee.lower() != "merchant":
+        return jsonify({
+            "error": "You have no access because you are not a Merchant"
+        })
     # Acess the database
     with Session(bind=db.engine) as session:
         merchants = session.scalars(select(Merchants).order_by(Merchants.id.desc())).all()
@@ -296,9 +319,11 @@ def get_merchants():
         return jsonify({"message": "Merchant not found", "status": 404}), 404
           
 @app_toko.route("/api/merchants/<int:id>", methods  = ["GET"])
+@jwt_required()
 def get_merchants_id(id):
+
     with Session(bind=db.engine) as session:
-        merchant = session.scalars(select(Merchants.store_name, Products.name, Products.price, Products.stock).join(Products, Merchants.id == Products.merchant_id).filter(Merchants.id == id)).all()
+        merchant = session.scalars(select(Merchants.store_name, Products.name, Products.price, Products.stock).join(Products, Merchants.id == Products.id_merchant).filter(Merchants.id == id)).all()
         if merchant:
             return jsonify({"message": "Merchant found", "status": 200, "data": merchant}), 200
         return jsonify({"message": "Merchant not found", "status": 404}), 404          
