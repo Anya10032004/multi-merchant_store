@@ -470,7 +470,7 @@ def catalog():
     with Session(bind=db.engine) as session:
         products = session.scalars(select(Products).order_by(Products.id.desc())).all()
         if products:
-            return jsonify({"message": "List of products", "status": 200, "data": [p.info_product() for p in products if p.stock > 0]}), 200
+            return jsonify({"message": "List of products", "status": 200, "data": [p.info_producs() for p in products if p.stock > 0]}), 200
         return jsonify({"message": "No products found", "status": 404}), 404
 
 @app_toko.route("/api/catalog/<int:product_id>", methods = ["GET"])
@@ -478,7 +478,7 @@ def get_catalog(product_id):
     with Session(bind=db.engine) as session:
         product = session.scalars(select(Products).where(Products.id == id)).first()
         if product:
-            return jsonify({"message": "Product found", "status": 200, "data": product.info_product()}), 200
+            return jsonify({"message": "Product found", "status": 200, "data": product.info_products()}), 200
         return jsonify({"message": "Product not found", "status": 404}), 404
 
 @app_toko.route("/api/claims", methods = ["POST"])
@@ -495,7 +495,7 @@ def claim_product():
     data = request.get_json()
     product_id = data.get("product_id")
     amount = data.get("amount")
-    if not product_id or not amount:
+    if product_id is None or amount is None:
         return jsonify({"message": "Missing required fields", "status": 400}), 400
     
     with Session(bind=db.engine) as session:
@@ -522,10 +522,6 @@ def get_claims():
         return jsonify({
             "error": "You have no access because you are not a User"
         })
-    if "id" not in session:
-        return jsonify({"message": "You are not logged in", "status": 401}), 401
-    if session["role"] != "USER":
-        return jsonify({"message": "You are not a user", "status": 403}), 403
     with Session(bind=db.engine) as session:
         claims = session.scalars(select(Claims).order_by(Claims.id.desc())).all()
         if claims:
