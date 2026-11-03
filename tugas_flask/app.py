@@ -467,18 +467,51 @@ def delete_products(product_id):
 # CATALOG
 @app_toko.route("/api/catalog", methods = ["GET"])    
 def catalog():
+    page = request.args.get('page', type=int)
+    per_page = request.args.get('per_page', type =int)
+    search = request.args.get('search')
+    id_merchant = request.args.get("merchant_id", type=int)
+
+
     with Session(bind=db.engine) as session:
-        products = session.scalars(select(Products).order_by(Products.id.desc())).all()
-        if products:
-            return jsonify({"message": "List of products", "status": 200, "data": [p.info_producs() for p in products if p.stock > 0]}), 200
-        return jsonify({"message": "No products found", "status": 404}), 404
+        products = select(Products.product_name, Merchants.store_name, Products.stock).join(Merchants, Products.id_merchant == Merchants.id)
+            
+        if search is not None:
+            products = products.where(Products.product_name.ilike(f"%{search}%"))
+        
+        if id_merchant is not None:
+            products = products.where(Products.id_merchant == id_merchant)
+        
+        if page is not None and per_page is not None:
+            products = products.limit(per_page).offset((page-1*per_page))
+
+        products = session.execute(products).all()
+        if len(products) == 0:
+            return jsonify({"message": "No products found", "status": 404}), 404 
+
+
+        return jsonify(
+                             {
+                              "message": "List of products", "status": 200, 
+                             "data": [
+                                {
+                                "Product name": p.product_name, 
+                                "Store name": p.store_name, 
+                                "stock": p.stock } for p in products if int(p.stock) > 0
+                                ] 
+                                }
+
+                                ), 200
+
+
+
 
 @app_toko.route("/api/catalog/<int:product_id>", methods = ["GET"])
 def get_catalog(product_id):
     with Session(bind=db.engine) as session:
-        product = session.scalars(select(Products).where(Products.id == id)).first()
+        product = session.scalars(select(Products).where(Products.id == product_id)).all()
         if product:
-            return jsonify({"message": "Product found", "status": 200, "data": product.info_products()}), 200
+            return jsonify({"message": "Product found", "status": 200, "data": [l.info_products() for l in product]}), 200
         return jsonify({"message": "Product not found", "status": 404}), 404
 
 @app_toko.route("/api/claims", methods = ["POST"])
@@ -493,11 +526,10 @@ def claim_product():
         })
 
     data = request.get_json()
-    product_id = data.get("product_id")
-    amount = data.get("amount")
+    product_id = data.get("id_product")
+    amount = data.get("quantity")
     if product_id is None or amount is None:
         return jsonify({"message": "Missing required fields", "status": 400}), 400
-    
     with Session(bind=db.engine) as session:
         prod = session.scalars(select(Products).where(Products.id == product_id)).first()
         if not prod:
@@ -507,10 +539,10 @@ def claim_product():
         prod.stock -= amount
         session.add(prod)
         session.commit()
-        new_claim = Claims(id_product=product_id, amount=amount, id_user=token_acess.get("id"))
+        new_claim = Claims(id_product=product_id, quantity=amount, id_user=token_acess.get("id"))
         session.add(new_claim)
         session.commit()
-        return jsonify({"message": "Claim added successfully", "status": 201, "data": new_claim.info_claim()}), 201
+        return jsonify({"message": "Claim added successfully", "status": 201, "data": new_claim.info_claims()}), 201
 
 @app_toko.route("/api/claims", methods = ["GET"])
 @jwt_required() # This is means that to  acess this endpoint you need to login first (we need to bring the token when accessing this endpoint)
@@ -525,7 +557,7 @@ def get_claims():
     with Session(bind=db.engine) as session:
         claims = session.scalars(select(Claims).order_by(Claims.id.desc())).all()
         if claims:
-            return jsonify({"message": "List of claims", "status": 200, "data": [c.info_claim() for c in claims]}), 200
+            return jsonify({"message": "List of claims", "status": 200, "data": [c.info_claims() for c in claims]}), 200
         return jsonify({"message": "No claims found", "status": 404}), 404
 
 
