@@ -483,7 +483,12 @@ def catalog():
             products = products.where(Products.id_merchant == id_merchant)
         
         if page is not None and per_page is not None:
-            products = products.limit(per_page).offset((page-1*per_page))
+            if page <= 0:
+                return jsonify({
+                    "message": "0 is not allow",
+                    "status": 404
+                })
+            products = products.limit(per_page).offset((page-1)*per_page  + 1)
 
         products = session.execute(products).all()
         if len(products) == 0:
