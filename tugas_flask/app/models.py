@@ -1,12 +1,15 @@
 # Model --> model.py(This is where we define teh tabble)
-from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import mapped_column, Mapped
+from sqlalchemy import String, DateTime, Integer, ForeignKey
+from datetime import datetime
+from app import db
 
-db = SQLAlchemy()
+
 class Users(db.Model):
     __tablename__ = "users"
     id : Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name : Mapped[str] = mapped_column(String(255), unique=True)
-    email : Mapped[str] = mpped_column(String(255))
+    email : Mapped[str] = mapped_column(String(255))
     password : Mapped[str] = mapped_column(String(255))
     role : Mapped[str] = mapped_column(String(225))
 

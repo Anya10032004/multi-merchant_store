@@ -3,15 +3,7 @@ from flask_jwt_extended import JWTManager
 from flask_sqlalchemy import SQLAlchemy
 from app.config import Config
 from app.errors import register_error_handlers
-
-from app.routes.auth import auth_bp
-from app.routes.merchants import merchants_bp
-from app.routes.products import products_bp
-from app.routes.catalog import catalog_bp
-from app.routes.claims import claims_bp
-
-db = SQLAlchemy()
-jwt = JWTManager()
+from app.extensions import db, jwt
 
 
 def create_app(config_class = Config): # create_app() function is used to changes on flask application
@@ -21,8 +13,14 @@ def create_app(config_class = Config): # create_app() function is used to change
     db.init_app(app_toko) # Initialize database
     jwt.init_app(app_toko)
 
+    from app.routes.auth import auth_bp
+    from app.routes.merchant import merchants_db 
+    from app.routes.product import products_bp
+    from app.routes.catalog import catalog_bp
+    from app.routes.claims import claims_bp
+
     app_toko.register_blueprint(auth_bp, url_prefix="/api")
-    app_toko.register_blueprint(merchants_bp, url_prefix="/api")
+    app_toko.register_blueprint(merchants_db, url_prefix="/api")
     app_toko.register_blueprint(products_bp, url_prefix="/api")
     app_toko.register_blueprint(catalog_bp, url_prefix="/api")
     app_toko.register_blueprint(claims_bp, url_prefix="/api")

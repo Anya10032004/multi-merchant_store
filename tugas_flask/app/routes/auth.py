@@ -1,7 +1,7 @@
 from flask import Blueprint, Flask, jsonify, request
 from flask_jwt_extended import create_access_token
 from werkzeug.security import check_password_hash, generate_password_hash
-from sqlalchemy.orm Session
+from sqlalchemy.orm import session
 from sqlalchemy import  select
 from app import db
 from app.models import Users
@@ -34,7 +34,7 @@ def register():
         ), 401
     
     # Acess the database
-    with Session(bind=db.engine) as session:
+    with session(bind=db.engine) as session:
         # check if email already exists
         user = session.scalars(select(Users).where(Users.email == emaill)).first()
         if user:
@@ -56,7 +56,7 @@ def login():
     
     
     # Acess the database
-    with Session(bind=db.engine) as session: # this code is to acesss session, session is for interacting with the database, 
+    with session(bind=db.engine) as session: # this code is to acesss session, session is for interacting with the database, 
                                              # it will create a temporary session to interact with the database and close it after the interaction
         users = session.scalars(select(Users).where(Users.email == emaill)).first() # this code is to select a user from the database based on the email 
                                                                                                                        # and password provided, 

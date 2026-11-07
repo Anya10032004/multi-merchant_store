@@ -5,9 +5,9 @@ from flask_jwt_extended import  get_jwt, jwt_required, get_jwt_identity
 from app import db
 from app.models import Merchants, Products, Claims
 
-catalog_bp = Blueprint("catalog", __name__)
+claims_bp = Blueprint("claims", __name__)
 
-@catalog_bp.route("/claims", methods = ["POST"])
+@claims_bp.route("/claims", methods = ["POST"])
 @jwt_required() # This is means that to  acess this endpoint you need to login first (we need to bring the token when accessing this endpoint)
 def claim_product():
     token_acess = get_jwt() # After we use jwt_required() to check if we have login, we 
@@ -37,7 +37,7 @@ def claim_product():
         session.commit()
         return jsonify({"message": "Claim added successfully", "status": 201, "data": new_claim.info_claims()}), 201
 
-@catalog_bp.route("/claims", methods = ["GET"])
+@claims_bp.route("/claims", methods = ["GET"])
 @jwt_required() # This is means that to  acess this endpoint you need to login first (we need to bring the token when accessing this endpoint)
 def get_claims():
     token_acess = get_jwt() # After we use jwt_required() to check if we have login, we 

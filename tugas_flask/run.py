@@ -1,13 +1,16 @@
 from app import create_app, db
 import json 
 from flask import Flask, jsonify,request
+from flask_sqlalchemy import SQLAlchemy
+
 
 app_store = create_app() # This is for starting the store app
+
 
 @app_store.route("/api", methods=["GET"])
 def main():
     return jsonify({
-        "message": "Welcome to the API",
+        "message": "Welcome to the API WAHHHHHHH",
         "status": 200,
         "data": None
     })
