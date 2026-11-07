@@ -9,6 +9,7 @@ def register_error_handlers(app):
     def handle_http_error(error):
         return jsonify({
             "message": error.description,
+            "tambahan": "ahhhhh",
             "status": error.code,
         }), error.code
 

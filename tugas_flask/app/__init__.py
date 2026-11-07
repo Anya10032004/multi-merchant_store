@@ -26,7 +26,7 @@ def create_app(config_class = Config): # create_app() function is used to change
     app_toko.register_blueprint(claims_bp, url_prefix="/api")
 
 
-    register_error_handlers(app_toko)
+    # register_error_handlers(app_toko)
 
     return app_toko
 

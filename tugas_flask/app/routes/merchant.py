@@ -117,12 +117,21 @@ def get_merchants():
             return jsonify({"message": "Merchant found", "status": 200, "data": [m.info_merchants() for m in merchants]}), 200
         return jsonify({"message": "Merchant not found", "status": 404}), 404
           
-@merchants_db.route("/api/merchants/<int:id>", methods  = ["GET"])
+@merchants_db.route("/merchants/<int:id>", methods  = ["GET"])
 @jwt_required()
 def get_merchants_id(id):
 
     with Session(bind=db.engine) as session:
-        merchant = session.scalars(select(Merchants.store_name, Products.name, Products.price, Products.stock).join(Products, Merchants.id == Products.id_merchant).filter(Merchants.id == id)).all()
+        merchant = session.execute(select(Merchants.store_name, Products.product_name, Products.price, Products.stock).join(Products, Merchants.id == Products.id_merchant).filter(Merchants.id == id)).all()
         if merchant:
-            return jsonify({"message": "Merchant found", "status": 200, "data": merchant}), 200
-        return jsonify({"message": "Merchant not found", "status": 404}), 404    
+            result = []
+            for row in merchant:
+                result.append(    {
+                    "store_name": row.store_name,
+                    "product_name": row.product_name,
+                    "price": row.price,
+                    "stock": row.stock
+                } )
+            
+            return jsonify({"message": "Store and it's product found", "status": 200, "data": result}), 200
+        return jsonify({"message": "Store has no product", "status": 404}), 404    

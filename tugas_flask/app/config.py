@@ -5,7 +5,7 @@ class Config:
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "development-jwt-key-change-me")
     SQLALCHEMY_DATABASE_URI = os.getenv(
         "DATABASE_URL",
-        "sqlite:///db_store",
+        "mysql+pymysql://root:@localhost:3306/db_store",
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     JWT_ACCESS_TOKEN_EXPIRES = 60 * 60 * 24  # 24 hours
