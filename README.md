@@ -65,7 +65,7 @@ cd <Folder_location>\Projects
 Next, run the following command to clone the repository from GitHub:
 
 ```
-git clone https://github.com/Anya10032004/RestAPIMiniProject_Perpustakaan
+git clone https://https://github.com/Anya10032004/multi-merchant_store
 ```
 Git will download the repository and create a new folder containing the project files.
 
@@ -73,13 +73,13 @@ Git will download the repository and create a new folder containing the project 
 Next, enter the downloaded folder by running:
 
 ```
-cd "<Folder_location>\RestAPIMiniProject_Perpustakaan"
+cd "<Folder_location>\multi-merchant_store"
 ```
 ### 4. Make a virtual enviroment
 After that, we will make a virtual enviroment with a name perpustakaan, we will need to the following commands:
 
 ```
-python -m venv perpustakaan
+python -m venv store
 ```
 
 ### 5. Activate the virtual enviroment
@@ -88,19 +88,19 @@ Commands to  activate the virtual enviroment is based on terminal you will use:
 - Windows PowerShell:
 
    ```
-   .\perpustakaan\Scripts\Activate.ps1
+   .\store\Scripts\Activate.ps1
    ```
    
 - Windows Command Prompt (CMD):
   
    ```
-   .\perpustakaan\Scripts\Activate.ps1
+   .\store\Scripts\Activate.ps1
    ```
    
 - Git Bash / Linux / macOS:
   
   ```
-  source perpustakaan/Scripts/activate
+  source store/Scripts/activate
   ```
 You can tell that the virtual environment is active when you see the prefix (perpustakaan) at the beginning of your terminal prompt.
 
@@ -127,10 +127,10 @@ pip install -r requirements.txt
    |-----------------|-----------------|------------------------------------------------------------------------------------------------------------------------------------------------|
    | Database Driver | `mysql+pymysql` | Specifies MySQL as the database and PyMySQL as the Python driver.                                                                              |
    | Username        | `root`          | The MySQL username used to connect to the database.                                                                                            |
-   | Password        | Empty           | No password is configured for this setup.                                                                                                      |
+   | Password        | Empty           | The password to configured for this setup(by default, we dont need password)                                                                   |
    | Host            | `localhost`     | Connects to MySQL running on your own computer. If MySQL runs on another server, replace `localhost` with the server's IP address or hostname. |
    | Port            | `3306`          | The default MySQL port. Change it if your MySQL server uses a different port.                                                                  |
-   | Database Name   | `perpustakaan`  | The name of the database created in Step 8.                                                                                                    |
+   | Database Name   | `store`         | The name of the database created in Step 8.                                                                                                    |
    
    **Important**: Make sure the username, password, host, port, and database name match your MySQL configuration. If you use a password, add it after root: in the connection URL.
    
@@ -142,14 +142,15 @@ pip install -r requirements.txt
 
 Run the ```app.py```:
 
-    python main.py
+    python run.py
     
 If it works the output will be:
 
 ```
- * Serving Flask app 'main'
+ * Serving Flask app 'app'
  * Debug mode: on
- * Running on http://127.0.0.1:5000 
+ * Running on http://127.0.0.1:5000
 ```
-The ```penulis```, ```kategori```, and ```buku``` tabbles will be automattically made when we run the app 
+
+The ```Users```, ```Merchants```,  ```Products```, and ```Claims``` tabbles will be automattically made when we run the app 
     
