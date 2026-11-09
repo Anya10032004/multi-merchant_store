@@ -2,8 +2,11 @@
 
 Flask project that builds a multi-merchant store REST API. It demonstrates user authentication with JWT, role-based access control, store and product management (CRUD), product claiming, database relationships using Flask-SQLAlchemy, and catalog features such as search, filtering, and pagination.
 
-## 💻 System Requierement
-
+## 💻 System Requirement
+ - Pyhton 3.10+(make sure to click the "Add Python to PATH" button befor download)
+ - MySQL Database Server(you can use XAMPP or Laragon, but i use Laragon)
+ - Postman(for API testing)
+ - Vs code(Code editor) or you can also use Antigravity IDE(make sure the antigravity that you are download has a black background)
 
 ## ⚙️ Project structure 
 
