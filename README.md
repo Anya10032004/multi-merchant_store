@@ -179,3 +179,517 @@ For protected endpoints, send the token in the request header:
 ```text
 Authorization: Bearer YOUR_ACCESS_TOKEN
 ```
+
+
+### 1. Home API
+ - Method: `GET`
+ - URL: `http://127.0.0.1:5000/api `
+ - Response Expected (200 OK):
+   ```
+   Welcome to the API
+   ```
+### 2. Author API
+#### a. Create Author API
+ - Method: `POST`
+ - URL: `http://127.0.0.1:5000/create/penulis `
+ - Body(JSON):
+   ```
+   {
+    "nama_penulis": "Sefanya PN",
+    "email": "sefanyapn@gmail.com"
+   }
+   ```
+ - Response Expected:
+   ```
+   {
+    "data": {
+        "create_at": "2026-10-19T17:33:21",
+        "email": "sefanyapn@gmail.com",
+        "id_penulis": 4,
+        "nama_penulis": "Sefanya PN"
+    },
+    "message": "Data berhasil ditambahkan",
+    "status": 200
+   }
+   ```
+#### b. Read Author API
+ - Method: `GET`
+ - URL: `http://127.0.0.1:5000/api/penulis `
+ - Response Expected:
+   ```
+   {
+    "data": [
+        {
+            "create_at": "2026-10-15T14:28:42",
+            "email": "kakaa@gmail.com",
+            "id_penulis": 2,
+            "nama_penulis": "mama"
+        },
+        {
+            "create_at": "2026-10-15T14:28:58",
+            "email": "papakakaka@gmail.com",
+            "id_penulis": 3,
+            "nama_penulis": "alslda"
+        },
+        {
+            "create_at": "2026-10-19T17:33:21",
+            "email": "sefanyapn@gmail.com",
+            "id_penulis": 4,
+            "nama_penulis": "Sefanya PN"
+        }
+    ],
+    "message": "Data berhasil diambil",
+    "status": 200
+   }
+   ```
+#### c. Read Author API based on ID
+ - Method: `GET`
+ - URL: `http://127.0.0.1:5000/api/penulis/2`
+ - Response Expected:
+   ```
+   {
+    "data": {
+        "create_at": "2026-10-15T14:28:42",
+        "email": "kakaa@gmail.com",
+        "id_penulis": 2,
+        "nama_penulis": "mama"
+    },
+    "message": "Data berhasil diambil",
+    "status": 200
+   }
+   ```
+#### d. Update Author API based on ID
+- Method: `PUT`
+ - URL: `http://127.0.0.1:5000/api/penulis/2`
+ - Body(JSON):
+   ```
+   {
+    "nama_penulis": "haha",
+    "email": "haha@gmail.com"
+   }
+
+   ```
+ - Response Expected:
+   ```
+   {
+    "data": {
+        "create_at": "2026-10-15T14:28:42",
+        "email": "haha@gmail.com",
+        "id_penulis": 2,
+        "nama_penulis": "haha"
+    },
+    "message": "Data berhasil diupdate",
+    "status": 200
+   }
+   ```
+#### e. Delete Author API based on ID
+- Method: `DELETE`
+ - URL: `http://127.0.0.1:5000/api/penulis/4`
+ - Response Expected:
+    ```
+    {
+    "data": {
+        "create_at": "2026-10-19T17:33:21",
+        "email": "sefanyapn@gmail.com",
+        "id_penulis": 4,
+        "nama_penulis": "Sefanya PN"
+    },
+    "message": "Data berhasil dihapus",
+    "status": 200
+   }
+    ```
+
+### 3. Categori API
+#### a. Create Categoty API
+ - Method: `POST`
+ - URL: `http://127.0.0.1:5000/create/penulis `
+ - Body(JSON):
+   ```
+   {
+    "nama_kategori": "romatic",
+    "deskripsi": "Dunia milik kita berdua"
+   }
+   ```
+ - Response Expected:
+   
+   ```
+   {
+   "message": "Data successfully added",
+    "status": 200,
+    "data": {
+        "deskripsi": "Dunia milik kita berdua",
+        "id_kategori": 5,
+        "nama_kategori": "romatic"
+    }
+    
+   }
+   ```
+#### b. Read Categoty API
+- Method: `GET`
+ - URL: `http://127.0.0.1:5000/api/kategori `
+ - Response Expected:
+   ```
+   {
+
+   "message": "Data berhasil diambil",
+    "status": "success",
+    "data": [
+        {
+            "deskripsi": "Ya hantu hantu atau mistis",
+            "id_kategori": 1,
+            "nama_kategori": "Horror Yassss"
+        },
+        {
+            "deskripsi": "Intinya saat dua orang saling membantu dalam pertumbuhan atau jadi TOLOLL",
+            "id_kategori": 2,
+            "nama_kategori": "romantis"
+        },
+        {
+            "deskripsi": "fiksi tetapi berisfat ilmiah",
+            "id_kategori": 4,
+            "nama_kategori": "sci-fi"
+        },
+        {
+            "deskripsi": "Dunia milik kita berdua",
+            "id_kategori": 5,
+            "nama_kategori": "romatic"
+        }
+    ],
+    
+    }
+    
+   ```
+#### c. Read Category API based on ID
+ - Method: `GET`
+ - URL: `http://127.0.0.1:5000/api/kategori/1`
+ - Response Expected:
+   ```
+   {
+   "message": "Data berhasil diambil",
+    "status": "success",
+    "data": {
+        "deskripsi": "Ya hantu hantu atau mistis",
+        "id_kategori": 1,
+        "nama_kategori": "Horror Yassss"
+    }
+    
+    }
+   ```
+#### d. Update Category API based on ID
+- Method: `PUT`
+ - URL: `http://127.0.0.1:5000/api/kategori/1`
+ - Body(JSON):
+   ```
+   {
+    "nama_kategori": "Horror YEYYYY",
+    "deskripsi": "Bisa Hantu bisa penjahat"
+
+   }
+   ```
+ - Response Expected:
+```
+{
+  "message": "Data berhasil diupdate",
+    "status": 200,
+    "data": {
+        "deskripsi": "Bisa Hantu bisa penjahat",
+        "id_kategori": 1,
+        "nama_kategori": "Horror YEYYYY"
+    
+   }
+```
+
+#### e. Delete Category API based on ID
+ - Method: `DELETE`
+ - URL: `http://127.0.0.1:5000/api/penulis/4`
+ - Response Expected:
+
+```
+{
+    "message": "Data berhasil dihapus",
+    "status": 200,
+
+    "data": {
+        "deskripsi": "Dunia milik kita berdua",
+        "id_kategori": 5,
+        "nama_kategori": "romatic"
+    }
+    
+   }
+```
+
+  
+
+### 4. Book API
+#### a. Create Book API
+ - Method: `POST`
+ - URL: `http://127.0.0.1:5000/api/buku `
+ - Body(JSON):
+   ```
+   {
+    "judul": "Shimbaa",
+    "isbn": "12349494444912",
+    "tahun_terbit": 2001,
+    "harga": "2334000",
+    "id_penulis": 3,
+    "id_kategori": 4
+   }
+   ```
+ - Response Expected:
+   
+   ```
+   {
+    "message": "Data successfully added",
+    "status": "success",
+    "data": {
+        "harga": 2334000,
+        "id_buku": 18,
+        "id_kategori": 4,
+        "id_penulis": 3,
+        "isbn": "12349494444912",
+        "judul": "Shimbaa",
+        "tahun_terbit": 2001
+    },
+   }
+   ```
+#### b. Read Book API
+- Method: `GET`
+ - URL: `http://127.0.0.1:5000/api/buku`
+ - Response Expected:
+   ```
+   {
+   "message": "Data successfully retrived",
+    "status": "success",
+    "data": [
+        {
+            "harga": 10000,
+            "id_buku": 1,
+            "id_kategori": 1,
+            "id_penulis": 2,
+            "isbn": "123",
+            "judul": "haha",
+            "tahun_terbit": 2020
+        },
+        {
+            "harga": 100000,
+            "id_buku": 3,
+            "id_kategori": 2,
+            "id_penulis": 3,
+            "isbn": "12344",
+            "judul": "charles dickinson",
+            "tahun_terbit": 2010
+        },
+        {
+            "harga": 1334000,
+            "id_buku": 4,
+            "id_kategori": 1,
+            "id_penulis": 3,
+            "isbn": "1234sd4",
+            "judul": "Harry Potter",
+            "tahun_terbit": 2000
+        },
+        {
+            "harga": 1334000,
+            "id_buku": 5,
+            "id_kategori": 1,
+            "id_penulis": 3,
+            "isbn": "123494949",
+            "judul": "Hobbit",
+            "tahun_terbit": 2000
+        },
+        {
+            "harga": 2334000,
+            "id_buku": 18,
+            "id_kategori": 4,
+            "id_penulis": 3,
+            "isbn": "12349494444912",
+            "judul": "Shimbaa",
+            "tahun_terbit": 2001
+        }
+    ],
+   }
+    
+   ```
+#### c. Read Book API based on ID
+ - Method: `GET`
+ - URL: `http://127.0.0.1:5000/api/buku/3`
+ - Response Expected:
+   ```
+   {
+   "message": "Data successfully retrived",
+    "status": "success",
+    "data": {
+        "harga": 100000,
+        "id_buku": 3,
+        "id_kategori": 2,
+        "id_penulis": 3,
+        "isbn": "12344",
+        "judul": "charles dickinson",
+        "tahun_terbit": 2010
+    }
+    }
+   ```
+#### d. Update Book API based on ID
+- Method: `PUT`
+ - URL: `http://127.0.0.1:5000/api/buku/4`
+ - Body(JSON):
+   ```
+   {
+    "judul": "Why haha is for laughing?"
+   }
+   ```
+ - Response Expected:
+```
+{
+    "message": "Data successfully updated",
+    "status": "success",
+    "data": {
+        "harga": 1334000,
+        "id_buku": 4,
+        "id_kategori": 1,
+        "id_penulis": 3,
+        "isbn": "1234sd4",
+        "judul": "Why haha is for laughing?",
+        "tahun_terbit": 2000
+    }
+}
+```
+
+#### e. Delete Category API based on ID
+ - Method: `DELETE`
+ - URL: `http://127.0.0.1:5000/api/buku/3`
+ - Response Expected:
+
+```
+{
+     "message": "Data successfully deleted",
+    "status": 200,
+    "data": {
+        "harga": 100000,
+        "id_buku": 3,
+        "id_kategori": 2,
+        "id_penulis": 3,
+        "isbn": "12344",
+        "judul": "charles dickinson",
+        "tahun_terbit": 2010
+    }
+}
+```
+#### f. Filter based on the Author ID
+ - Method: `GET`
+ - URL: `http://127.0.0.1:5000/api/buku?penulis_id=3`
+ - Response Expected:
+   ```
+   {
+   "message": "Data successfully retrived",
+    "status": "success",
+    "data": [
+        {
+            "harga": 100000,
+            "id_buku": 3,
+            "id_kategori": 2,
+            "id_penulis": 3,
+            "isbn": "12344",
+            "judul": "charles dickinson",
+            "tahun_terbit": 2010
+        },
+        {
+            "harga": 1334000,
+            "id_buku": 4,
+            "id_kategori": 1,
+            "id_penulis": 3,
+            "isbn": "1234sd4",
+            "judul": "Harry Potter",
+            "tahun_terbit": 2000
+        },
+        {
+            "harga": 1334000,
+            "id_buku": 5,
+            "id_kategori": 1,
+            "id_penulis": 3,
+            "isbn": "123494949",
+            "judul": "Hobbit",
+            "tahun_terbit": 2000
+        },
+        {
+            "harga": 2334000,
+            "id_buku": 18,
+            "id_kategori": 4,
+            "id_penulis": 3,
+            "isbn": "12349494444912",
+            "judul": "Shimbaa",
+            "tahun_terbit": 2001
+        }
+    ]
+   }
+   ```
+
+#### g. Filter based on the Category ID
+ - Method: `GET`
+ - URL: `http://127.0.0.1:5000/api/buku?kategori_id=1`
+ - Response Expected:
+   ```
+   {
+   "message": "Data successfully retrived",
+    "status": "success",
+    "data": [
+        {
+            "harga": 10000,
+            "id_buku": 1,
+            "id_kategori": 1,
+            "id_penulis": 2,
+            "isbn": "123",
+            "judul": "haha",
+            "tahun_terbit": 2020
+        },
+        {
+            "harga": 1334000,
+            "id_buku": 4,
+            "id_kategori": 1,
+            "id_penulis": 3,
+            "isbn": "1234sd4",
+            "judul": "Harry Potter",
+            "tahun_terbit": 2000
+        },
+        {
+            "harga": 1334000,
+            "id_buku": 5,
+            "id_kategori": 1,
+            "id_penulis": 3,
+            "isbn": "123494949",
+            "judul": "Hobbit",
+            "tahun_terbit": 2000
+        }
+    ]
+   }
+   ```
+#### h. Filter based on the title or judul(q)
+ - Method: `GET`
+ - URL: `http://127.0.0.1:5000/api/buku?q=harry`
+ - Response Expected:
+   ```
+   {
+    "message": "Data successfully retrived",
+    "status": "success",
+    "data": [
+        {
+            "harga": 1334000,
+            "id_buku": 4,
+            "id_kategori": 1,
+            "id_penulis": 3,
+            "isbn": "1234sd4",
+            "judul": "Harry Potter",
+            "tahun_terbit": 2000
+        },
+        {
+            "harga": 23340,
+            "id_buku": 19,
+            "id_kategori": 4,
+            "id_penulis": 3,
+            "isbn": "12349494444912111",
+            "judul": "Harry osborn wow",
+            "tahun_terbit": 2001
+        }
+    ]
+   }
+   ```
