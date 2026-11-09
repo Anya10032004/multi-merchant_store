@@ -3,28 +3,23 @@
 Flask project that builds a multi-merchant store REST API. It demonstrates user authentication with JWT, role-based access control, store and product management (CRUD), product claiming, database relationships using Flask-SQLAlchemy, and catalog features such as search, filtering, and pagination.
 ## 1. Project structure
 
-```text
-store_api_reference/
+```
 ├── app/
 │   ├── __init__.py
 │   ├── config.py
 │   ├── models.py
 │   ├── errors.py
+|   |── extensions.py
 │   └── routes/
-│       ├── __init__.py
-│       ├── helpers.py
 │       ├── auth.py
 │       ├── merchants.py
 │       ├── products.py
 │       ├── catalog.py
 │       └── claims.py
-├── .env.example
-├── .gitignore
 ├── requirements.txt
 └── run.py
 ```
 
-The image you shared shows the important separation: application setup, configuration, models, errors, routes, and the entry point. This project keeps that same idea and splits routes by feature because this API has several resources.
 
 ## 2. Setup
 
