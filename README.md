@@ -44,7 +44,7 @@ Flask project that builds a multi-merchant store REST API. It demonstrates user 
     <img src="images/SQLQueryEditor.png" alt="SQLQueryEditor" width="600">
 8.In the the SQL Query Editor Create the database name "perpustakaan" with the following Query:
 
-     CREATE DATABASE perpustakaan;
+     CREATE DATABASE db_store;
     
 
 ## 2. Setup
