@@ -154,7 +154,7 @@ If it works the output will be:
 
 The ```Users```, ```Merchants```,  ```Products```, and ```Claims``` tabbles will be automattically made when we run the app 
 
-## ⚙️ API testing
+## ⚙️ API testing(NOT DONE)
 | Method | Endpoint | Access | Purpose |
 |---|---|---|---|
 | GET | `/api` | Public | Health check |
