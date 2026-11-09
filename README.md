@@ -1,7 +1,6 @@
-# Store API — Clean Architecture Reference
+# REST API mini project: Multi-merchant store 🏬
 
-A learning project based on the features in the supplied mini store API. It demonstrates a Flask application factory, configuration, SQLAlchemy models, centralized error handling, and route Blueprints.
-
+Flask project that builds a multi-merchant store REST API. It demonstrates user authentication with JWT, role-based access control, store and product management (CRUD), product claiming, database relationships using Flask-SQLAlchemy, and catalog features such as search, filtering, and pagination.
 ## 1. Project structure
 
 ```text
