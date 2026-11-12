@@ -310,35 +310,43 @@ Authorization: Bearer YOUR_ACCESS_TOKEN
  - Response Expected:
    ```
    {
-    "data": [
-        {
-            "description": "A soap for the hair i guess",
-            "id": 12,
-            "id_merchant": 4,
-            "price": 30000,
-            "product_name": "Shampoo",
-            "stock": 10
-        },
-        {
-            "description": "A soap for the hair i guess",
-            "id": 13,
-            "id_merchant": 4,
-            "price": 30000,
-            "product_name": "Shampoo",
-            "stock": 10
-        },
-        {
+            {
             "description": "A soap for the hair i guess",
             "id": 14,
             "id_merchant": 4,
             "price": 30000,
             "product_name": "Shampoo",
             "stock": 10
+        },
+        {
+            "description": "Kue sus dari jakara",
+            "id": 15,
+            "id_merchant": 4,
+            "price": 10000,
+            "product_name": "Kue sus",
+            "stock": 20
+        },
+        {
+            "description": "Sabun mandi biore isi 5000 ml",
+            "id": 16,
+            "id_merchant": 4,
+            "price": 30000,
+            "product_name": "Sabun biore",
+            "stock": 30
+        },
+        {
+            "description": "Jus kotak lemonne",
+            "id": 17,
+            "id_merchant": 4,
+            "price": 15000,
+            "product_name": "Jus lemonn",
+            "stock": 30
         }
     ],
     "message": "List of yoru products",
     "status": 200
    }
+       
     
    ```
 #### c. Read Book API based on ID
