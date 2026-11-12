@@ -157,20 +157,20 @@ The ```Users```, ```Merchants```,  ```Products```, and ```Claims``` tabbles will
 ## ⚙️ API testing(NOT DONE)
 | Method | Endpoint | Access | Purpose |
 |---|---|---|---|
-| GET | `/api` | Public | Health check |
+| GET | `/api` | Public | Main page |
 | POST | `/api/register` | Public | Register a user or merchant |
 | POST | `/api/login` | Public | Login and receive a JWT |
 | POST | `/api/merchants` | Merchant | Create merchant profile |
-| GET | `/api/merchant/me` | Merchant | Get own merchant profile |
-| PUT | `/api/merchant/me` | Merchant | Update own merchant profile |
-| GET | `/api/merchants` | Merchant | List merchant profiles |
-| GET | `/api/merchants/<id>` | Authenticated | Get merchant and its products |
+| GET | `/api/merchant/me` | Merchant | See your own store profile|
+| PUT | `/api/merchant/me` | Merchant | Update own store profile |
+| GET | `/api/merchants` | Merchant | List merchant's store profiles |
+| GET | `/api/merchants/<id>` | Merchant | See merchant and its products |
 | POST | `/api/products` | Merchant | Create a product |
 | GET | `/api/products/mine` | Merchant | List own products |
 | PUT | `/api/products/<id>` | Merchant | Update own product |
 | DELETE | `/api/products/<id>` | Merchant | Delete own product |
-| GET | `/api/catalog` | Public | Browse/search available products |
-| GET | `/api/catalog/<id>` | Public | Get one catalog product |
+| GET | `/api/catalog` | User | search available products |
+| GET | `/api/catalog/<id>` | User | Get Detail information of the product|
 | POST | `/api/claims` | User | Claim a product and reduce stock |
 | GET | `/api/claims` | User | List own claims |
 
