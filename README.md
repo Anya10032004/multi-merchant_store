@@ -273,100 +273,38 @@ Authorization: Bearer YOUR_ACCESS_TOKEN
   
     
    ```
-#### c. Read Category API based on ID
- - Method: `GET`
- - URL: `http://127.0.0.1:5000/api/kategori/1`
- - Response Expected:
-   ```
-   {
-   "message": "Data berhasil diambil",
-    "status": "success",
-    "data": {
-        "deskripsi": "Ya hantu hantu atau mistis",
-        "id_kategori": 1,
-        "nama_kategori": "Horror Yassss"
-    }
-    
-    }
-   ```
-#### d. Update Category API based on ID
-- Method: `PUT`
- - URL: `http://127.0.0.1:5000/api/kategori/1`
- - Body(JSON):
-   ```
-   {
-    "nama_kategori": "Horror YEYYYY",
-    "deskripsi": "Bisa Hantu bisa penjahat"
 
-   }
-   ```
- - Response Expected:
-```
-{
-  "message": "Data berhasil diupdate",
-    "status": 200,
-    "data": {
-        "deskripsi": "Bisa Hantu bisa penjahat",
-        "id_kategori": 1,
-        "nama_kategori": "Horror YEYYYY"
-    
-   }
-```
 
-#### e. Delete Category API based on ID
- - Method: `DELETE`
- - URL: `http://127.0.0.1:5000/api/penulis/4`
- - Response Expected:
-
-```
-{
-    "message": "Data berhasil dihapus",
-    "status": 200,
-
-    "data": {
-        "deskripsi": "Dunia milik kita berdua",
-        "id_kategori": 5,
-        "nama_kategori": "romatic"
-    }
-    
-   }
-```
-
-  
-
-### 4. Book API
-#### a. Create Book API
+### 4. Product API(Only for user with the "Merchant" role)
+#### a. Add Product to store
  - Method: `POST`
  - URL: `http://127.0.0.1:5000/api/buku `
  - Body(JSON):
    ```
    {
-    "judul": "Shimbaa",
-    "isbn": "12349494444912",
-    "tahun_terbit": 2001,
-    "harga": "2334000",
-    "id_penulis": 3,
-    "id_kategori": 4
+    "name": "Shampoo",
+    "description": "A soap for the hair i guess",
+    "price":"30000",
+    "stock": "10"
    }
    ```
  - Response Expected:
    
    ```
    {
-    "message": "Data successfully added",
-    "status": "success",
     "data": {
-        "harga": 2334000,
-        "id_buku": 18,
-        "id_kategori": 4,
-        "id_penulis": 3,
-        "isbn": "12349494444912",
-        "judul": "Shimbaa",
-        "tahun_terbit": 2001
+        "description": "A soap for the hair i guess",
+        "id": 12,
+        "id_merchant": 4,
+        "price": 30000,
+        "product_name": "Shampoo",
+        "stock": 10
     },
+    "message": "Product added successfully",
+    "status": 201
    }
    ```
-#### b. Read Book API
+#### b. Look at merchant own product API
 - Method: `GET`
  - URL: `http://127.0.0.1:5000/api/buku`
  - Response Expected:
