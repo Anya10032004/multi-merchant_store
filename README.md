@@ -384,6 +384,7 @@ Authorization: Bearer YOUR_ACCESS_TOKEN
     "status": 200
 }
 ```
+### 3. Category API
 
 #### e. Delete Category API based on ID
  - Method: `DELETE`
