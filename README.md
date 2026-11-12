@@ -306,59 +306,38 @@ Authorization: Bearer YOUR_ACCESS_TOKEN
    ```
 #### b. Look at merchant own product API
 - Method: `GET`
- - URL: `http://127.0.0.1:5000/api/buku`
+ - URL: `http://127.0.0.1:5000/api/products/mine`
  - Response Expected:
    ```
    {
-   "message": "Data successfully retrived",
-    "status": "success",
     "data": [
         {
-            "harga": 10000,
-            "id_buku": 1,
-            "id_kategori": 1,
-            "id_penulis": 2,
-            "isbn": "123",
-            "judul": "haha",
-            "tahun_terbit": 2020
+            "description": "A soap for the hair i guess",
+            "id": 12,
+            "id_merchant": 4,
+            "price": 30000,
+            "product_name": "Shampoo",
+            "stock": 10
         },
         {
-            "harga": 100000,
-            "id_buku": 3,
-            "id_kategori": 2,
-            "id_penulis": 3,
-            "isbn": "12344",
-            "judul": "charles dickinson",
-            "tahun_terbit": 2010
+            "description": "A soap for the hair i guess",
+            "id": 13,
+            "id_merchant": 4,
+            "price": 30000,
+            "product_name": "Shampoo",
+            "stock": 10
         },
         {
-            "harga": 1334000,
-            "id_buku": 4,
-            "id_kategori": 1,
-            "id_penulis": 3,
-            "isbn": "1234sd4",
-            "judul": "Harry Potter",
-            "tahun_terbit": 2000
-        },
-        {
-            "harga": 1334000,
-            "id_buku": 5,
-            "id_kategori": 1,
-            "id_penulis": 3,
-            "isbn": "123494949",
-            "judul": "Hobbit",
-            "tahun_terbit": 2000
-        },
-        {
-            "harga": 2334000,
-            "id_buku": 18,
-            "id_kategori": 4,
-            "id_penulis": 3,
-            "isbn": "12349494444912",
-            "judul": "Shimbaa",
-            "tahun_terbit": 2001
+            "description": "A soap for the hair i guess",
+            "id": 14,
+            "id_merchant": 4,
+            "price": 30000,
+            "product_name": "Shampoo",
+            "stock": 10
         }
     ],
+    "message": "List of yoru products",
+    "status": 200
    }
     
    ```
