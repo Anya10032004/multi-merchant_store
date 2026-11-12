@@ -191,7 +191,7 @@ Authorization: Bearer YOUR_ACCESS_TOKEN
     "status": 200
     }
    ```
-### 2. Register 
+### 2. Register  API 
  - Method: `POST`
  - URL: `http://127.0.0.1:5000/api/register`
  - Body(JSON):
@@ -243,128 +243,27 @@ Authorization: Bearer YOUR_ACCESS_TOKEN
    }
 
    ```
-#### b. Read Author API
- - Method: `GET`
- - URL: `http://127.0.0.1:5000/api/penulis `
- - Response Expected:
-   ```
-   {
 
-#### c. Read Author API based on ID
- - Method: `GET`
- - URL: `http://127.0.0.1:5000/api/penulis/2`
+
+### 3. Login API
+- Method: `POST`
+ - URL: `http://127.0.0.1:5000/api/login `
  - Response Expected:
    ```
+
    {
+    "Acess Token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc5NDQ3OTA1MCwianRpIjoiODZiNmYxNWEtYWFhZC00Nzg3LTllZTAtNWI1MmFmYjZkMjYxIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjE1IiwibmJmIjoxNzk0NDc5MDUwLCJjc3JmIjoiNTFlYzdjZDctNTQ2ZS00Y2I1LWE1MmEtMzRiNzIwZjZhM2RlIiwiZXhwIjoxNzk0NTY1NDUwLCJpZCI6MTUsIm5hbWUiOiJsb2xhIiwiZW1haWwiOiJsb2xhMTIzQGdtYWlsLmNvbSIsInBhc3N3b3JkIjoic2NyeXB0OjMyNzY4Ojg6MSRFTnlnNzlXMjV5ZUdJR2h3JGI4NjllNzgyN2RkYzNhYzE1NGY4ZjZhYzNhMDBjYzlhZjlhMDliZDNlMWNkZDVkMmUyZGQwMTU1NjBkOTE5NWRkYTQzMWU4NTljM2M1ZDBlMjdhNjg2NjUwNDJiMjA3YmVmY2M0MjA0OTZhMGRlZGRlZjlkMmQ0NDMzNjE2OTdmIiwicm9sZSI6InVzZXIifQ.T9OI5yB1gZ8B4yalB9bJTW6fq8ttKUvFD04Vb_LNdEA",
     "data": {
-        "create_at": "2026-10-15T14:28:42",
-        "email": "kakaa@gmail.com",
-        "id_penulis": 2,
-        "nama_penulis": "mama"
+        "email": "lola123@gmail.com",
+        "id": 15,
+        "name": "lola",
+        "password": "scrypt:32768:8:1$ENyg79W25yeGIGhw$b869e7827ddc3ac154f8f6ac3a00cc9af9a09bd3e1cdd5d2e2dd015560d9195dda431e859c3c5d0e27a68665042b207befcc420496a0deddef9d2d443361697f",
+        "role": "user"
     },
-    "message": "Data berhasil diambil",
+    "message": "Login successful",
     "status": 200
    }
-   ```
-#### d. Update Author API based on ID
-- Method: `PUT`
- - URL: `http://127.0.0.1:5000/api/penulis/2`
- - Body(JSON):
-   ```
-   {
-    "nama_penulis": "haha",
-    "email": "haha@gmail.com"
-   }
-
-   ```
- - Response Expected:
-   ```
-   {
-    "data": {
-        "create_at": "2026-10-15T14:28:42",
-        "email": "haha@gmail.com",
-        "id_penulis": 2,
-        "nama_penulis": "haha"
-    },
-    "message": "Data berhasil diupdate",
-    "status": 200
-   }
-   ```
-#### e. Delete Author API based on ID
-- Method: `DELETE`
- - URL: `http://127.0.0.1:5000/api/penulis/4`
- - Response Expected:
-    ```
-    {
-    "data": {
-        "create_at": "2026-10-19T17:33:21",
-        "email": "sefanyapn@gmail.com",
-        "id_penulis": 4,
-        "nama_penulis": "Sefanya PN"
-    },
-    "message": "Data berhasil dihapus",
-    "status": 200
-   }
-    ```
-
-### 3. Categori API
-#### a. Create Categoty API
- - Method: `POST`
- - URL: `http://127.0.0.1:5000/create/penulis `
- - Body(JSON):
-   ```
-   {
-    "nama_kategori": "romatic",
-    "deskripsi": "Dunia milik kita berdua"
-   }
-   ```
- - Response Expected:
-   
-   ```
-   {
-   "message": "Data successfully added",
-    "status": 200,
-    "data": {
-        "deskripsi": "Dunia milik kita berdua",
-        "id_kategori": 5,
-        "nama_kategori": "romatic"
-    }
-    
-   }
-   ```
-#### b. Read Categoty API
-- Method: `GET`
- - URL: `http://127.0.0.1:5000/api/kategori `
- - Response Expected:
-   ```
-   {
-
-   "message": "Data berhasil diambil",
-    "status": "success",
-    "data": [
-        {
-            "deskripsi": "Ya hantu hantu atau mistis",
-            "id_kategori": 1,
-            "nama_kategori": "Horror Yassss"
-        },
-        {
-            "deskripsi": "Intinya saat dua orang saling membantu dalam pertumbuhan atau jadi TOLOLL",
-            "id_kategori": 2,
-            "nama_kategori": "romantis"
-        },
-        {
-            "deskripsi": "fiksi tetapi berisfat ilmiah",
-            "id_kategori": 4,
-            "nama_kategori": "sci-fi"
-        },
-        {
-            "deskripsi": "Dunia milik kita berdua",
-            "id_kategori": 5,
-            "nama_kategori": "romatic"
-        }
-    ],
-    
-    }
+  
     
    ```
 #### c. Read Category API based on ID
