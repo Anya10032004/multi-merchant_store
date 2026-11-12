@@ -310,9 +310,10 @@ Authorization: Bearer YOUR_ACCESS_TOKEN
  - Response Expected:
    ```
    {
-            {
+    "data": [
+        {
             "description": "A soap for the hair i guess",
-            "id": 14,
+            "id": 12,
             "id_merchant": 4,
             "price": 30000,
             "product_name": "Shampoo",
@@ -346,51 +347,41 @@ Authorization: Bearer YOUR_ACCESS_TOKEN
     "message": "List of yoru products",
     "status": 200
    }
-       
     
    ```
-#### c. Read Book API based on ID
- - Method: `GET`
- - URL: `http://127.0.0.1:5000/api/buku/3`
+#### c. Delete product based on ID 
+ - Method: `DELETE`
+ - URL: `http://127.0.0.1:5000/api/buku/13`
  - Response Expected:
    ```
    {
-   "message": "Data successfully retrived",
-    "status": "success",
-    "data": {
-        "harga": 100000,
-        "id_buku": 3,
-        "id_kategori": 2,
-        "id_penulis": 3,
-        "isbn": "12344",
-        "judul": "charles dickinson",
-        "tahun_terbit": 2010
-    }
-    }
+    "message": "Product deleted successfully",
+    "status": 200
+   }
    ```
-#### d. Update Book API based on ID
+#### d. Update product based on ID
 - Method: `PUT`
- - URL: `http://127.0.0.1:5000/api/buku/4`
+ - URL: `http://127.0.0.1:5000/api/products/15`
  - Body(JSON):
    ```
    {
-    "judul": "Why haha is for laughing?"
+    "name": "Kue sus jakarta dna bandung sekarang",
+    "description": "Kue sus nya diproduksi di jakarta bandung"
    }
    ```
  - Response Expected:
 ```
 {
-    "message": "Data successfully updated",
-    "status": "success",
     "data": {
-        "harga": 1334000,
-        "id_buku": 4,
-        "id_kategori": 1,
-        "id_penulis": 3,
-        "isbn": "1234sd4",
-        "judul": "Why haha is for laughing?",
-        "tahun_terbit": 2000
-    }
+        "description": "Kue sus nya diproduksi di jakarta bandung",
+        "id": 15,
+        "id_merchant": 4,
+        "price": 10000,
+        "product_name": "Kue sus",
+        "stock": 20
+    },
+    "message": "Product updated successfully",
+    "status": 200
 }
 ```
 
