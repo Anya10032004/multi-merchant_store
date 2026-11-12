@@ -23,6 +23,7 @@ Flask project that builds a multi-merchant store REST API. It demonstrates user 
 │       ├── products.py
 │       ├── catalog.py
 │       └── claims.py
+|── Database/schema.sql
 ├── requirements.txt
 └── run.py
 ```
