@@ -246,8 +246,15 @@ Authorization: Bearer YOUR_ACCESS_TOKEN
 
 
 ### 3. Login API
-- Method: `POST`
+ - Method: `POST`
  - URL: `http://127.0.0.1:5000/api/login `
+ - Body(JSON):
+   ```
+   {
+    "email": "lola123@gmail.com",
+    "password": "lola123"
+    }
+   ```
  - Response Expected:
    ```
 
