@@ -384,143 +384,147 @@ Authorization: Bearer YOUR_ACCESS_TOKEN
     "status": 200
 }
 ```
-### 5. Category API
+### 5. Catalog API(For User with role "User" only)
 
-#### e. Delete Category API based on ID
- - Method: `DELETE`
- - URL: `http://127.0.0.1:5000/api/buku/3`
+#### e. See catalog of the product
+ - Method: `GET`
+ - URL: `http://127.0.0.1:5000/api/catalog`
  - Response Expected:
 
 ```
 {
-     "message": "Data successfully deleted",
-    "status": 200,
-    "data": {
-        "harga": 100000,
-        "id_buku": 3,
-        "id_kategori": 2,
-        "id_penulis": 3,
-        "isbn": "12344",
-        "judul": "charles dickinson",
-        "tahun_terbit": 2010
-    }
+    "data": [
+        {
+            "Product name": "Biore",
+            "Store name": "Anya store",
+            "stock": 11
+        },
+        {
+            "Product name": "Biore",
+            "Store name": "Anya store",
+            "stock": 12
+        },
+        {
+            "Product name": "Ponds",
+            "Store name": "Anya store",
+            "stock": 12
+        },
+        {
+            "Product name": "Ponds",
+            "Store name": "Anya store",
+            "stock": 12
+        },
+        {
+            "Product name": "vanila milk",
+            "Store name": "Anya store",
+            "stock": 10
+        },
+        {
+            "Product name": "cake ko",
+            "Store name": "Anya store",
+            "stock": 100
+        },
+        {
+            "Product name": "juice fun fun",
+            "Store name": "Anya store",
+            "stock": 10
+        },
+        {
+            "Product name": "Chips fun fun",
+            "Store name": "hoho store 2",
+            "stock": 6
+        },
+        {
+            "Product name": "Fanta",
+            "Store name": "hoho store 2",
+            "stock": 2
+        },
+        {
+            "Product name": "Shampoo",
+            "Store name": "haha",
+            "stock": 10
+        },
+        {
+            "Product name": "Kue sus",
+            "Store name": "haha",
+            "stock": 20
+        },
+        {
+            "Product name": "Sabun biore",
+            "Store name": "haha",
+            "stock": 30
+        },
+        {
+            "Product name": "Jus lemonn",
+            "Store name": "haha",
+            "stock": 30
+        }
+    ],
+    "message": "List of products",
+    "status": 200
 }
+
 ```
-#### f. Filter based on the Author ID
+#### f. See details of the product
  - Method: `GET`
- - URL: `http://127.0.0.1:5000/api/buku?penulis_id=3`
+ - URL: `http://127.0.0.1:5000/api/catalog/11`
  - Response Expected:
    ```
    {
-   "message": "Data successfully retrived",
-    "status": "success",
     "data": [
         {
-            "harga": 100000,
-            "id_buku": 3,
-            "id_kategori": 2,
-            "id_penulis": 3,
-            "isbn": "12344",
-            "judul": "charles dickinson",
-            "tahun_terbit": 2010
-        },
-        {
-            "harga": 1334000,
-            "id_buku": 4,
-            "id_kategori": 1,
-            "id_penulis": 3,
-            "isbn": "1234sd4",
-            "judul": "Harry Potter",
-            "tahun_terbit": 2000
-        },
-        {
-            "harga": 1334000,
-            "id_buku": 5,
-            "id_kategori": 1,
-            "id_penulis": 3,
-            "isbn": "123494949",
-            "judul": "Hobbit",
-            "tahun_terbit": 2000
-        },
-        {
-            "harga": 2334000,
-            "id_buku": 18,
-            "id_kategori": 4,
-            "id_penulis": 3,
-            "isbn": "12349494444912",
-            "judul": "Shimbaa",
-            "tahun_terbit": 2001
+            "description": "Sodaa",
+            "id": 11,
+            "id_merchant": 3,
+            "price": 15000,
+            "product_name": "Fanta",
+            "stock": 2
         }
-    ]
+    ],
+    "message": "Product found",
+    "status": 200
    }
    ```
 
-#### g. Filter based on the Category ID
- - Method: `GET`
- - URL: `http://127.0.0.1:5000/api/buku?kategori_id=1`
- - Response Expected:
+#### g. Claim the product
+ - Method: `POST`
+ - URL: `http://127.0.0.1:5000/api/claims`
+ - Body(JSON):
+   ```
+ - Body(JSON):
    ```
    {
-   "message": "Data successfully retrived",
-    "status": "success",
-    "data": [
-        {
-            "harga": 10000,
-            "id_buku": 1,
-            "id_kategori": 1,
-            "id_penulis": 2,
-            "isbn": "123",
-            "judul": "haha",
-            "tahun_terbit": 2020
-        },
-        {
-            "harga": 1334000,
-            "id_buku": 4,
-            "id_kategori": 1,
-            "id_penulis": 3,
-            "isbn": "1234sd4",
-            "judul": "Harry Potter",
-            "tahun_terbit": 2000
-        },
-        {
-            "harga": 1334000,
-            "id_buku": 5,
-            "id_kategori": 1,
-            "id_penulis": 3,
-            "isbn": "123494949",
-            "judul": "Hobbit",
-            "tahun_terbit": 2000
-        }
-    ]
+    "id_product": 11,
+    "quantity": 3
    }
    ```
-#### h. Filter based on the title or judul(q)
- - Method: `GET`
- - URL: `http://127.0.0.1:5000/api/buku?q=harry`
  - Response Expected:
    ```
    {
-    "message": "Data successfully retrived",
-    "status": "success",
-    "data": [
-        {
-            "harga": 1334000,
-            "id_buku": 4,
-            "id_kategori": 1,
-            "id_penulis": 3,
-            "isbn": "1234sd4",
-            "judul": "Harry Potter",
-            "tahun_terbit": 2000
-        },
-        {
-            "harga": 23340,
-            "id_buku": 19,
-            "id_kategori": 4,
-            "id_penulis": 3,
-            "isbn": "12349494444912111",
-            "judul": "Harry osborn wow",
-            "tahun_terbit": 2001
-        }
-    ]
+    "message": "Not enough stock, only 2 left",
+    "status": 400
+   }
+   ```
+ - Method: `POST`
+ - URL: `http://127.0.0.1:5000/api/claims`
+ - Body(JSON):
+   ```
+   {
+    "id_product": 11,
+    "quantity": 1
+   }
+   ```
+ - Response Expected:
+   ```
+   {
+    "data": {
+        "create_at": "2026-11-12T22:45:57",
+        "id": 5,
+        "id_product": 11,
+        "id_user": 15,
+        "quantity": 1
+    },
+    "message": "Claim added successfully",
+    "status": 201
    }
    ```
